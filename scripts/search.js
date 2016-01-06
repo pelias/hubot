@@ -68,7 +68,6 @@ function makeResponse(url, places) {
 
   return {
     "text": message,
-    channel: 'search-bots',
     "attachments": [
       {
         "text": JSON.stringify(places, null, 2),
