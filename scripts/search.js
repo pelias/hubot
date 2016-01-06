@@ -10,14 +10,20 @@ module.exports = function (robot) {
   robot.respond(new RegExp('search'), function (res) {
 
     if (!isValidRequest(res)) {
-      res.send('Oops, you didn\'t provide us text');
+      res.respond('Oops, you didn\'t provide us text');
       return;
     }
 
-    var query = res.message.text.substring('search'.length + 1);
+    var indexofSearch = res.message.text.indexOf('search');
+    var query = res.message.text.substring(indexofSearch + 'search'.length + 1);
+
     sendRequest('search', api_key, query, function (err, url, places) {
       var response = makeResponse(url, places);
-      res.send(JSON.stringify(response, null, 2));
+      console.log(response);
+      response.channel = res.message.room;
+      // messages with attachments have to be sent via robot.emit
+      // see https://github.com/slackhq/hubot-slack/issues/108
+      robot.emit('slack-attachment', response);
     });
 
   });
@@ -50,9 +56,6 @@ function sendRequest(endpoint, api_key, params, callback) {
       callback(err);
       return;
     }
-
-    console.log(results.body);
-
     var places = JSON.parse(results.body);
     callback(null, url, places);
   });
@@ -64,8 +67,8 @@ function makeResponse(url, places) {
   message += makeResultList(places);
 
   return {
-    "response_type": "in_channel",
     "text": message,
+    channel: 'search-bots',
     "attachments": [
       {
         "text": JSON.stringify(places, null, 2),
