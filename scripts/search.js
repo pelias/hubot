@@ -1,3 +1,19 @@
+# Description
+#   Allows Hubot to geocode using Mapzen Search / Pelias
+#
+# Dependencies:
+#   request
+#
+# Configuration:
+#   api_key
+#
+# Commands:
+#   search <parameters> - calls Mapzen/v1/search (e.g. text=Union Square)
+#
+# Authors:
+#   @orangejulius
+#   @dianashk
+
 'use strict';
 
 var request = require('request');
